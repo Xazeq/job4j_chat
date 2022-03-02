@@ -2,6 +2,7 @@ package ru.job4j.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import ru.job4j.domain.Person;
@@ -15,11 +16,13 @@ import java.util.List;
 public class PersonController {
     private final ChatService service;
     private final RestTemplate restTemplate;
+    private final BCryptPasswordEncoder encoder;
     private static final String ROOM_API_ID = "http://localhost:8080/room/{id}";
 
-    public PersonController(ChatService service, RestTemplate restTemplate) {
+    public PersonController(ChatService service, RestTemplate restTemplate, BCryptPasswordEncoder encoder) {
         this.service = service;
         this.restTemplate = restTemplate;
+        this.encoder = encoder;
     }
 
     @GetMapping("/")
@@ -37,7 +40,8 @@ public class PersonController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Person> create(@RequestBody Person person) {
+    public ResponseEntity<Person> signUp(@RequestBody Person person) {
+        person.setPassword(encoder.encode(person.getPassword()));
         return new ResponseEntity<>(
                 this.service.savePerson(person),
                 HttpStatus.CREATED
