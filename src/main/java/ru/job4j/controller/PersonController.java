@@ -65,7 +65,7 @@ public class PersonController {
     @PutMapping("/{personId}/addRoom/{roomId}")
     public ResponseEntity<Void> addRoomToPerson(@PathVariable int personId, @PathVariable int roomId) {
         Person person = findById(personId).getBody();
-        Room room = restTemplate.getForObject(ROOM_API_ID, Room.class, roomId);
+        Room room = service.findRoomById(roomId).orElse(new Room());
         person.addRoom(room);
         this.update(person);
         return ResponseEntity.ok().build();

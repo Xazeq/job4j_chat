@@ -61,7 +61,7 @@ public class RoomController {
     @PutMapping("/{roomId}/addMessage")
     public ResponseEntity<Void> addMessageToRoom(@PathVariable int roomId, @RequestBody Message message) {
         Room room = findById(roomId).getBody();
-        Message savedMessage = restTemplate.postForObject(MESSAGE_API, message, Message.class);
+        Message savedMessage = service.saveMessage(message);
         room.addMessage(savedMessage);
         this.update(room);
         return ResponseEntity.ok().build();
