@@ -2,6 +2,7 @@ package ru.job4j.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -46,10 +47,9 @@ public class PersonController {
         Person person = this.service.findPersonById(id).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Person not found. Please, check id."
         ));
-        return new ResponseEntity<>(
-                person,
-                HttpStatus.OK
-        );
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(person);
     }
 
     @PostMapping("/")
