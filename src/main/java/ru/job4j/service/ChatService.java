@@ -1,6 +1,9 @@
 package ru.job4j.service;
 
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Message;
 import ru.job4j.domain.Person;
 import ru.job4j.domain.Role;
@@ -10,6 +13,9 @@ import ru.job4j.repository.PersonRepository;
 import ru.job4j.repository.RoleRepository;
 import ru.job4j.repository.RoomRepository;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,5 +96,58 @@ public class ChatService {
 
     public void deleteMessage(Message message) {
         messageRepository.delete(message);
+    }
+
+    public Person partialUpdatePerson(Person person)
+            throws InvocationTargetException, IllegalAccessException {
+        return this.partialUpdate(personRepository, person, person.getId());
+    }
+
+    public Role partialUpdateRole(Role role)
+            throws InvocationTargetException, IllegalAccessException {
+        return this.partialUpdate(roleRepository, role, role.getId());
+    }
+
+    public Room partialUpdateRoom(Room room)
+            throws InvocationTargetException, IllegalAccessException {
+        return this.partialUpdate(roomRepository, room, room.getId());
+    }
+
+    public Message partialUpdateMessage(Message message)
+            throws InvocationTargetException, IllegalAccessException {
+        return this.partialUpdate(messageRepository, message, message.getId());
+    }
+
+    private <T> T partialUpdate(CrudRepository<T, Integer> repository, T model, int id)
+            throws InvocationTargetException, IllegalAccessException {
+        var optionalCurrent = repository.findById(id);
+        T current;
+        if (optionalCurrent.isPresent()) {
+            current = optionalCurrent.get();
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Object not found. Please, check id.");
+        }
+        var methods = current.getClass().getDeclaredMethods();
+        var namePerMethod = new HashMap<String, Method>();
+        for (var method : methods) {
+            var name = method.getName();
+            if (name.startsWith("get") || name.startsWith("set")) {
+                namePerMethod.put(name, method);
+            }
+        }
+        for (var name : namePerMethod.keySet()) {
+            if (name.startsWith("get")) {
+                var getMethod = namePerMethod.get(name);
+                var setMethod = namePerMethod.get(name.replace("get", "set"));
+                if (setMethod == null) {
+                    continue;
+                }
+                var newValue = getMethod.invoke(model);
+                if (newValue != null) {
+                    setMethod.invoke(current, newValue);
+                }
+            }
+        }
+        return repository.save(current);
     }
 }

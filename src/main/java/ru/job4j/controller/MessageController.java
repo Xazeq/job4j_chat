@@ -7,6 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Message;
 import ru.job4j.service.ChatService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -66,5 +67,14 @@ public class MessageController {
         message.setId(id);
         this.service.deleteMessage(message);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Message> partialUpdateMessage(@RequestBody Message message)
+            throws InvocationTargetException, IllegalAccessException {
+        return new ResponseEntity<>(
+                this.service.partialUpdateMessage(message),
+                HttpStatus.OK
+        );
     }
 }

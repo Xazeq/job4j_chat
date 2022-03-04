@@ -9,6 +9,7 @@ import ru.job4j.domain.Message;
 import ru.job4j.domain.Room;
 import ru.job4j.service.ChatService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -86,5 +87,14 @@ public class RoomController {
         room.addMessage(savedMessage);
         this.update(room);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Room> partialUpdateRoom(@RequestBody Room room)
+            throws InvocationTargetException, IllegalAccessException {
+        return new ResponseEntity<>(
+                this.service.partialUpdateRoom(room),
+                HttpStatus.OK
+        );
     }
 }

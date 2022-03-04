@@ -15,6 +15,7 @@ import ru.job4j.service.ChatService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -100,6 +101,16 @@ public class PersonController {
         person.addRoom(room);
         this.update(person);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Person> partialUpdatePerson(@RequestBody Person person)
+            throws InvocationTargetException, IllegalAccessException {
+        person.setPassword(encoder.encode(person.getPassword()));
+        return new ResponseEntity<>(
+                this.service.partialUpdatePerson(person),
+                HttpStatus.OK
+        );
     }
 
     @ExceptionHandler(value = {IllegalArgumentException.class})

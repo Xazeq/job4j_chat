@@ -7,6 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Role;
 import ru.job4j.service.ChatService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
@@ -66,5 +67,14 @@ public class RoleController {
         role.setId(id);
         this.service.deleteRole(role);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/")
+    public ResponseEntity<Role> partialUpdateRole(@RequestBody Role role)
+            throws InvocationTargetException, IllegalAccessException {
+        return new ResponseEntity<>(
+                this.service.partialUpdateRole(role),
+                HttpStatus.OK
+        );
     }
 }
