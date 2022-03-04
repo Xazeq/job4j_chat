@@ -1,6 +1,10 @@
 package ru.job4j.domain;
 
+import ru.job4j.handlers.Operation;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -11,10 +15,19 @@ import java.util.Objects;
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(message = "Id must be non null", groups = {
+            Operation.OnUpdate.class, Operation.OnDelete.class
+    })
     private int id;
+
+    @NotBlank(message = "Name must be not empty", groups = {
+            Operation.OnCreate.class, Operation.OnUpdate.class
+    })
     private String name;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar created;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "rooms_messages",

@@ -2,11 +2,14 @@ package ru.job4j.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Role;
+import ru.job4j.handlers.Operation;
 import ru.job4j.service.ChatService;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -39,7 +42,8 @@ public class RoleController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Role> create(@RequestBody Role role) {
+    @Validated(Operation.OnCreate.class)
+    public ResponseEntity<Role> create(@Valid @RequestBody Role role) {
         if (role.getName() == null) {
             throw new NullPointerException("Role name can`t be empty");
         }
@@ -50,7 +54,8 @@ public class RoleController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Role role) {
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<Void> update(@Valid @RequestBody Role role) {
         if (role.getName() == null) {
             throw new NullPointerException("Role name can`t be empty");
         }
@@ -70,7 +75,8 @@ public class RoleController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Role> partialUpdateRole(@RequestBody Role role)
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<Role> partialUpdateRole(@Valid @RequestBody Role role)
             throws InvocationTargetException, IllegalAccessException {
         return new ResponseEntity<>(
                 this.service.partialUpdateRole(role),

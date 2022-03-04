@@ -1,6 +1,10 @@
 package ru.job4j.domain;
 
+import ru.job4j.handlers.Operation;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,12 +14,28 @@ import java.util.Objects;
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull(message = "Id must be non null", groups = {
+            Operation.OnUpdate.class
+    })
     private int id;
+
+    @NotBlank(message = "Username must be not empty", groups = {
+            Operation.OnCreate.class, Operation.OnUpdate.class
+    })
     private String username;
+
+    @NotBlank(message = "Password must be not empty", groups = {
+            Operation.OnCreate.class, Operation.OnUpdate.class
+    })
     private String password;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
+    @NotNull(message = "Role must be not null", groups = {
+            Operation.OnCreate.class, Operation.OnUpdate.class
+    })
     private Role role;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "persons_rooms",

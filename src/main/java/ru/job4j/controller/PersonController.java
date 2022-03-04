@@ -5,15 +5,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Person;
 import ru.job4j.domain.Room;
+import ru.job4j.handlers.Operation;
 import ru.job4j.service.ChatService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -28,7 +31,8 @@ public class PersonController {
     private final ObjectMapper objectMapper;
     private static final String ROOM_API_ID = "http://localhost:8080/room/{id}";
 
-    public PersonController(ChatService service, RestTemplate restTemplate, BCryptPasswordEncoder encoder, ObjectMapper objectMapper) {
+    public PersonController(ChatService service, RestTemplate restTemplate,
+                            BCryptPasswordEncoder encoder, ObjectMapper objectMapper) {
         this.service = service;
         this.restTemplate = restTemplate;
         this.encoder = encoder;
@@ -54,7 +58,8 @@ public class PersonController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Person> signUp(@RequestBody Person person) {
+    @Validated(Operation.OnCreate.class)
+    public ResponseEntity<Person> signUp(@Valid @RequestBody Person person) {
         if (person.getUsername() == null || person.getPassword() == null) {
             throw new NullPointerException("Username and password can`t be empty");
         }
@@ -69,7 +74,8 @@ public class PersonController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Person person) {
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<Void> update(@Valid @RequestBody Person person) {
         if (person.getUsername() == null || person.getPassword() == null) {
             throw new NullPointerException("Username and password can`t be empty");
         }
@@ -104,7 +110,8 @@ public class PersonController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Person> partialUpdatePerson(@RequestBody Person person)
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<Person> partialUpdatePerson(@Valid @RequestBody Person person)
             throws InvocationTargetException, IllegalAccessException {
         person.setPassword(encoder.encode(person.getPassword()));
         return new ResponseEntity<>(

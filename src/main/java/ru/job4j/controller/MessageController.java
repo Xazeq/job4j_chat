@@ -2,11 +2,14 @@ package ru.job4j.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Message;
+import ru.job4j.handlers.Operation;
 import ru.job4j.service.ChatService;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -39,7 +42,8 @@ public class MessageController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Message> create(@RequestBody Message message) {
+    @Validated(Operation.OnCreate.class)
+    public ResponseEntity<Message> create(@Valid @RequestBody Message message) {
         if (message.getText() == null) {
             throw new NullPointerException("Message text can`t be empty");
         }
@@ -50,7 +54,8 @@ public class MessageController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Message message) {
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<Void> update(@Valid @RequestBody Message message) {
         if (message.getText() == null) {
             throw new NullPointerException("Message text can`t be empty");
         }
@@ -70,7 +75,8 @@ public class MessageController {
     }
 
     @PatchMapping("/")
-    public ResponseEntity<Message> partialUpdateMessage(@RequestBody Message message)
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<Message> partialUpdateMessage(@Valid @RequestBody Message message)
             throws InvocationTargetException, IllegalAccessException {
         return new ResponseEntity<>(
                 this.service.partialUpdateMessage(message),
