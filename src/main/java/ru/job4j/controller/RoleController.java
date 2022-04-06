@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/role")
+@RequestMapping("/roles")
 public class RoleController {
     private final ChatService service;
 

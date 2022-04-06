@@ -16,11 +16,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/room")
+@RequestMapping("/rooms")
 public class RoomController {
     private final ChatService service;
     private final RestTemplate restTemplate;
-    private static final String MESSAGE_API = "http://localhost:8080/message/";
+    private static final String MESSAGE_API = "http://localhost:8080/messages/";
 
     public RoomController(ChatService service, RestTemplate restTemplate) {
         this.service = service;

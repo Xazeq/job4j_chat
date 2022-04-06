@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/message")
+@RequestMapping("/messages")
 public class MessageController {
     private final ChatService service;
 

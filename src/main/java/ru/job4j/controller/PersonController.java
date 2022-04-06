@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/persons")
 public class PersonController {
     private final ChatService service;
     private final RestTemplate restTemplate;
     private final BCryptPasswordEncoder encoder;
     private final ObjectMapper objectMapper;
-    private static final String ROOM_API_ID = "http://localhost:8080/room/{id}";
+    private static final String ROOM_API_ID = "http://localhost:8080/rooms/{id}";
 
     public PersonController(ChatService service, RestTemplate restTemplate,
                             BCryptPasswordEncoder encoder, ObjectMapper objectMapper) {
